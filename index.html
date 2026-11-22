@@ -818,6 +818,9 @@ tr.is-highlight > :last-child { box-shadow: 12px 0 var(--fill-tertiary); }
       .x-pc__age { display: inline-block; padding: 1px 8px; border-radius: 99px; font: var(--type-caption); background: var(--fill-primary-on); color: var(--text-secondary); }
       .x-pc__age.is-old { background: #c4262c; color: #fff; }
       .x-credito[hidden], #refField[hidden], #metodoField[hidden] { display: none !important; }
+      .x-fixpac { margin: 0; font: var(--type-label); font-size: 17px; }
+      .x-fixpac[hidden], #ventaPacField[hidden] { display: none !important; }
+      #ventaTitle:focus { outline: none; }
       .x-ro { opacity: .75; pointer-events: none; }
       .x-credito { border: 1px dashed var(--accent, #a8705f); border-radius: var(--r-s); padding: 12px; display: grid; gap: 10px; }
       .x-credito__saldo { font: var(--type-label); color: var(--accent, #a8705f); }
@@ -1103,8 +1106,9 @@ tr.is-highlight > :last-child { box-shadow: 12px 0 var(--fill-tertiary); }
 
     <dialog class="x-modal" id="ventaDlg">
       <form id="ventaForm">
-        <h3>Nueva venta</h3>
-        <label class="x-field">Paciente (opcional)<select name="clientaId"></select></label>
+        <h3 id="ventaTitle" tabindex="-1" autofocus>Nueva venta</h3>
+        <p class="x-fixpac" id="ventaPacFijo" hidden></p>
+        <label class="x-field" id="ventaPacField">Paciente (opcional)<select name="clientaId"></select></label>
         <fieldset class="x-svc">
           <legend>Tratamientos</legend>
           <div class="x-svc__list" id="ventaLines"></div>
@@ -2140,9 +2144,15 @@ tr.is-highlight > :last-child { box-shadow: 12px 0 var(--fill-tertiary); }
             vf.clientaId.value = clienta(cita.clientaId) ? cita.clientaId : "";
             ventaLines = citaSvcs(cita).map((s) => ({ id: s.id || "", nombre: s.nombre, precio: Number(s.precio) || 0 }));
           }
+          const fijo = !!(cita && clienta(cita.clientaId));
+          $("ventaPacField").hidden = fijo;
+          $("ventaPacFijo").hidden = !fijo;
+          $("ventaPacFijo").textContent = fijo ? "Paciente: " + clienta(cita.clientaId).nombre : "";
+          $("ventaTitle").textContent = cita ? "Cobrar sesión" : "Nueva venta";
           renderVentaLines();
           updCredito();
           $("ventaDlg").showModal();
+          try { $("ventaTitle").focus({ preventScroll: true }); } catch (_) {}
         }
         let ventaLines = [], montoTouched = false;
         const round2 = (n) => Math.round(n * 100) / 100;
@@ -2186,7 +2196,7 @@ tr.is-highlight > :last-child { box-shadow: 12px 0 var(--fill-tertiary); }
           $("refField").hidden = !(cob > 0) || vf.metodo.value === "Efectivo";
           $("cobradoHint").textContent = cob > m + 0.005 ? "No puede ser mayor que el monto a pagar." : !debe ? (cob > 0 ? `${bsOf(cob)} · paga todo` : "Pon 0 si no paga nada hoy.") : cob > 0 ? `${bsOf(cob)} · entra hoy a la Caja` : "No paga nada hoy";
           if (debe) {
-            $("creditoSaldo").textContent = `Pasa a Por cobrar: ${dual(resta)}`;
+            $("creditoSaldo").textContent = `Pasa a Cobrar: ${dual(resta)}`;
             $("creditoNota").textContent = vf.clientaId.value ? `${clienta(vf.clientaId.value)?.nombre || "El paciente"} quedará debiendo ese saldo.` : "Elige el paciente arriba para dejarle la deuda.";
           }
         }
