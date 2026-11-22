@@ -2328,7 +2328,7 @@ tr.is-highlight > :last-child { box-shadow: 12px 0 var(--fill-tertiary); }
           const otorgado = round2(state.cuentas.filter((a) => enP(a.fecha)).reduce((t, a) => t + (Number(a.total) || 0), 0));
           const cobradoP = round2(state.cuentas.reduce((t, a) => t + a.abonos.filter((ab) => enP(ab.fecha)).reduce((u, ab) => u + (Number(ab.monto) || 0), 0), 0));
           const pendP = round2(state.cuentas.filter((a) => enP(a.fecha)).reduce((t, a) => t + saldoCuenta(a), 0));
-          $("pcRepTotals").innerHTML = row("Vendido a crédito en el período", money(otorgado)) + row("Cobrado en el período", money(cobradoP)) + row("Pendiente de esas cuentas", money(pendP)) + row("Total general por cobrar", `${money(total)}${tasaN() > 0 ? " · " + bsOf(total) : ""}`, true);
+          $("pcRepTotals").innerHTML = row("Servicios a crédito en el período", money(otorgado)) + row("Cobrado en el período", money(cobradoP)) + row("Pendiente de esas cuentas", money(pendP)) + row("Total general por cobrar", `${money(total)}${tasaN() > 0 ? " · " + bsOf(total) : ""}`, true);
           $("pcRepList").innerHTML = rep.length ? rep.map((a) => `<tr><th scope="row" data-label="Fecha">${fmtDate(a.fecha)}</th><td data-label="Paciente">${esc(clienta(a.clientaId)?.nombre || "—")}</td><td data-label="Concepto">${esc(a.concepto || "Venta")}</td><td class="num" data-label="Total">${money(a.total)}</td><td class="num" data-label="Abonado">${money(abonadoCuenta(a))}</td><td class="num" data-label="Debe"><b>${money(saldoCuenta(a))}</b></td></tr>`).join("")
             : '<tr><td colspan="6" class="x-empty">No hay cuentas en este período.</td></tr>';
         }
