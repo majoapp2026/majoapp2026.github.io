@@ -815,6 +815,8 @@ tr.is-highlight > :last-child { box-shadow: 12px 0 var(--fill-tertiary); }
       .x-pc__hist { list-style: none; margin: 2px 0 0; padding: 0 0 0 10px; border-left: 2px solid var(--stroke-secondary); display: grid; gap: 2px; font: var(--type-caption); color: var(--text-secondary); }
       .x-pc__age { display: inline-block; padding: 1px 8px; border-radius: 99px; font: var(--type-caption); background: var(--fill-primary-on); color: var(--text-secondary); }
       .x-pc__age.is-old { background: #c4262c; color: #fff; }
+      .x-credito[hidden], #refField[hidden], #metodoField[hidden] { display: none !important; }
+      .x-ro { opacity: .75; pointer-events: none; }
       .x-credito { border: 1px dashed var(--accent, #a8705f); border-radius: var(--r-s); padding: 12px; display: grid; gap: 10px; }
       .x-credito__saldo { font: var(--type-label); color: var(--accent, #a8705f); }
       .x-debe { display: inline-block; margin-left: 6px; padding: 0 7px; border-radius: 99px; background: var(--accent, #a8705f); color: #fff; font-size: 11px; font-weight: 700; vertical-align: 1px; }
@@ -1108,16 +1110,13 @@ tr.is-highlight > :last-child { box-shadow: 12px 0 var(--fill-tertiary); }
           <label class="x-field">Agregar tratamiento<select id="ventaAdd"></select></label>
         </fieldset>
         <div class="x-two">
-          <label class="x-field">Monto a cobrar $<input name="monto" type="number" min="0" step="0.01" required /><span class="x-hint" id="ventaMontoHint">Igual al total; ajústalo para un descuento.</span></label>
-          <label class="x-field">Método<select name="metodo"><option>Pago móvil</option><option>Efectivo</option><option>Binance</option><option>Crédito</option></select></label>
+          <label class="x-field">Monto a pagar $<input name="monto" type="number" min="0" step="0.01" readonly tabindex="-1" class="x-ro" /><span class="x-hint" id="ventaMontoHint">Total de los tratamientos.</span></label>
+          <label class="x-field">Monto pagado $<input name="cobrado" type="number" min="0" step="0.01" /><span class="x-hint" id="cobradoHint">Pon 0 si no paga nada hoy.</span></label>
         </div>
+        <label class="x-field" id="metodoField">Método de pago<select name="metodo"><option>Pago móvil</option><option>Efectivo</option><option>Binance</option></select></label>
         <div class="x-credito" id="creditoBox" hidden>
-          <div class="x-two">
-            <label class="x-field">Inicial $ (opcional)<input name="inicial" type="number" min="0" step="0.01" placeholder="0" /></label>
-            <label class="x-field">Método de la inicial<select name="metodoIni"><option>Pago móvil</option><option>Efectivo</option><option>Binance</option></select></label>
-          </div>
           <p class="x-credito__saldo" id="creditoSaldo"></p>
-          <p class="fineprint">El saldo pasa al módulo Por cobrar. La inicial entra hoy a la Caja.</p>
+          <p class="fineprint" id="creditoNota"></p>
         </div>
         <label class="x-field" id="refField">Referencia (opcional)<input name="referencia" /></label>
         <div class="links">
@@ -2096,7 +2095,7 @@ tr.is-highlight > :last-child { box-shadow: 12px 0 var(--fill-tertiary); }
           $("creditoDiaLine").hidden = !creditosHoy.length;
           if (creditosHoy.length) $("creditoDiaLine").textContent = `Hoy se dejaron ${money(dejado)} a crédito (${creditosHoy.length} ${creditosHoy.length === 1 ? "cuenta" : "cuentas"}). Ese monto no suma a la caja hasta que lo cobres.`;
           $("ventaList").innerHTML = ventas.length
-            ? ventas.map((v) => `<tr><th scope="row" data-label="Hora">${v.hora ? fmtTime(v.hora) : "—"}</th><td data-label="Paciente">${esc(clienta(v.clientaId)?.nombre || "—")}</td><td data-label="Tratamientos">${Array.isArray(v.servicios) && v.servicios.length ? `<ul class="x-vsvc">${v.servicios.map((s) => `<li><span>${esc(s.nombre)}</span><span>${money(s.precio)}</span></li>`).join("")}</ul>` : esc(v.concepto)}${v.referencia ? `<small>Ref. ${esc(v.referencia)}</small>` : ""}${v.tipo === "inicial" ? `<small>Inicial de crédito · total ${money(cuentaById(v.cuentaId)?.total || 0)}</small>` : ""}</td><td data-label="Método">${esc(v.metodo)}</td><td class="num" data-label="Monto">${money(v.monto)}</td><td><button class="btn" data-del-venta="${v.id}" aria-label="Borrar venta">Borrar</button></td></tr>`).join("")
+            ? ventas.map((v) => `<tr><th scope="row" data-label="Hora">${v.hora ? fmtTime(v.hora) : "—"}</th><td data-label="Paciente">${esc(clienta(v.clientaId)?.nombre || "—")}</td><td data-label="Tratamientos">${Array.isArray(v.servicios) && v.servicios.length ? `<ul class="x-vsvc">${v.servicios.map((s) => `<li><span>${esc(s.nombre)}</span><span>${money(s.precio)}</span></li>`).join("")}</ul>` : esc(v.concepto)}${v.referencia ? `<small>Ref. ${esc(v.referencia)}</small>` : ""}${v.tipo === "inicial" ? `<small>Pago parcial · total ${money(cuentaById(v.cuentaId)?.total || 0)}, resto a Por cobrar</small>` : ""}</td><td data-label="Método">${esc(v.metodo)}</td><td class="num" data-label="Monto">${money(v.monto)}</td><td><button class="btn" data-del-venta="${v.id}" aria-label="Borrar venta">Borrar</button></td></tr>`).join("")
             : '<tr><td colspan="6" class="x-empty">No hay ventas este día.</td></tr>';
           $("gastoList").innerHTML = gastos.length
             ? gastos.map((g) => `<li><span>${esc(g.concepto)}<small>${fmtTime(g.hora)}</small></span><span class="x-row"><b>${money(g.monto)}</b><button class="btn" data-del-gasto="${g.id}" aria-label="Borrar gasto">Borrar</button></span></li>`).join("")
@@ -2134,13 +2133,13 @@ tr.is-highlight > :last-child { box-shadow: 12px 0 var(--fill-tertiary); }
           vf.clientaId.innerHTML = '<option value="">Sin paciente</option>' + [...state.clientas].sort(byName).map((c) => `<option value="${c.id}">${esc(c.nombre)}</option>`).join("");
           $("ventaAdd").innerHTML = '<option value="">Elegir tratamiento…</option>' + state.servicios.map((s) => `<option value="${s.id}">${esc(s.nombre)} · ${dual(s.precio)}</option>`).join("");
           ventaLines = [];
-          montoTouched = false;
+          montoTouched = false; cobradoTouched = false;
           if (cita) {
             vf.clientaId.value = clienta(cita.clientaId) ? cita.clientaId : "";
             ventaLines = citaSvcs(cita).map((s) => ({ id: s.id || "", nombre: s.nombre, precio: Number(s.precio) || 0 }));
           }
           renderVentaLines();
-          vf.metodo.onchange();
+          updCredito();
           $("ventaDlg").showModal();
         }
         let ventaLines = [], montoTouched = false;
@@ -2152,13 +2151,13 @@ tr.is-highlight > :last-child { box-shadow: 12px 0 var(--fill-tertiary); }
             : '<p class="x-svc__empty">Sin tratamientos. Agrega uno del catálogo.</p>';
           const tot = linesTotal();
           $("ventaSum").textContent = dual(tot);
-          if (!montoTouched) vf.monto.value = tot;
+          vf.monto.value = tot;
           updateMontoHint();
-          if (typeof updCredito === "function" && vf.inicial) updCredito();
+          if (typeof updCredito === "function" && vf.cobrado) updCredito();
         }
         function updateMontoHint() {
           const m = Number(vf.monto.value) || 0, tot = linesTotal(), diff = round2(tot - m);
-          $("ventaMontoHint").textContent = diff > 0 ? `${bsOf(m)} · descuento ${money(diff)}` : diff < 0 ? `${bsOf(m)} · ${money(-diff)} sobre el total` : `${bsOf(m)} · igual al total`;
+          $("ventaMontoHint").textContent = `${bsOf(m)} · total de los tratamientos`;
         }
         $("ventaLines").addEventListener("click", (e) => {
           const b = e.target.closest("[data-rm-line]");
@@ -2171,37 +2170,42 @@ tr.is-highlight > :last-child { box-shadow: 12px 0 var(--fill-tertiary); }
           e.target.value = "";
           renderVentaLines();
         };
+        let cobradoTouched = false;
         vf.monto.oninput = () => { montoTouched = vf.monto.value !== "" && Number(vf.monto.value) !== linesTotal(); updateMontoHint(); updCredito(); };
+        vf.cobrado.oninput = () => { cobradoTouched = vf.cobrado.value !== ""; updCredito(); };
         function updCredito() {
-          const cred = vf.metodo.value === "Crédito";
-          $("creditoBox").hidden = !cred;
-          const ini = Number(vf.inicial.value) || 0;
-          $("refField").hidden = cred ? !(ini > 0 && vf.metodoIni.value !== "Efectivo") : vf.metodo.value === "Efectivo";
-          if (cred) {
-            const m = Number(vf.monto.value) || 0, resta = round2(m - ini);
-            $("creditoSaldo").textContent = resta > 0 ? `Queda por cobrar: ${dual(resta)}` : "La inicial cubre todo; elige un método de pago normal.";
+          const m = round2(Number(vf.monto.value) || 0);
+          if (!cobradoTouched) vf.cobrado.value = m;
+          const cob = round2(vf.cobrado.value === "" ? 0 : Number(vf.cobrado.value) || 0), resta = round2(m - cob);
+          const debe = resta > 0.005;
+          $("creditoBox").hidden = !debe;
+          $("metodoField").hidden = !(cob > 0);
+          $("refField").hidden = !(cob > 0) || vf.metodo.value === "Efectivo";
+          $("cobradoHint").textContent = cob > m + 0.005 ? "No puede ser mayor que el monto a pagar." : !debe ? (cob > 0 ? `${bsOf(cob)} · paga todo` : "Pon 0 si no paga nada hoy.") : cob > 0 ? `${bsOf(cob)} · entra hoy a la Caja` : "No paga nada hoy";
+          if (debe) {
+            $("creditoSaldo").textContent = `Pasa a Por cobrar: ${dual(resta)}`;
+            $("creditoNota").textContent = vf.clientaId.value ? `${clienta(vf.clientaId.value)?.nombre || "El paciente"} quedará debiendo ese saldo.` : "Elige el paciente arriba para dejarle la deuda.";
           }
         }
         vf.metodo.onchange = updCredito;
-        vf.inicial.oninput = updCredito;
-        vf.metodoIni.onchange = updCredito;
+        vf.clientaId.onchange = updCredito;
         $("newVenta").onclick = () => openVenta();
         vf.onsubmit = (e) => {
           e.preventDefault();
           if (!ventaLines.length && !(Number(vf.monto.value) > 0)) { showNotice("Agrega al menos un tratamiento o un monto."); return; }
           const c = cobrando, fecha = c ? c.fecha : cajaDay;
           const servicios = ventaLines.map((s) => ({ nombre: s.nombre, precio: Number(s.precio) || 0 }));
-          if (vf.metodo.value === "Crédito") {
-            const total = round2(Number(vf.monto.value) || 0), ini = round2(Number(vf.inicial.value) || 0);
-            if (!vf.clientaId.value) { showNotice("Para dejar una cuenta a crédito, elige el paciente que la debe."); return; }
-            if (!(total > 0)) { showNotice("El monto a cobrar debe ser mayor que cero."); return; }
-            if (ini < 0 || ini >= total) { showNotice("La inicial debe ser menor que el monto. Si paga todo, elige Pago móvil, Efectivo o Binance."); return; }
+          const totalV = round2(Number(vf.monto.value) || 0), cobV = round2(vf.cobrado.value === "" ? 0 : Number(vf.cobrado.value) || 0);
+          if (cobV > totalV + 0.005) { showNotice("Lo cobrado no puede ser mayor que el monto a pagar."); return; }
+          if (cobV < totalV - 0.005) {
+            const total = totalV, ini = cobV;
+            if (!vf.clientaId.value) { showNotice("Para dejar saldo pendiente, elige el paciente que lo debe."); return; }
             const hora = c ? c.hora : nowTime();
             const cta = { id: uid(), clientaId: vf.clientaId.value, fecha, hora, citaId: c ? c.id : "", servicios, concepto: joinNames(servicios) || "Venta", total, abonos: [] };
             if (ini > 0) {
-              const vid = uid(), ref = vf.metodoIni.value === "Efectivo" ? "" : vf.referencia.value.trim();
-              state.ventas.push({ id: vid, fecha: today(), hora: nowTime(), clientaId: cta.clientaId, servicioId: "", servicios, concepto: cta.concepto, monto: ini, metodo: vf.metodoIni.value, referencia: ref, citaId: cta.citaId, cuentaId: cta.id, tipo: "inicial" });
-              cta.abonos.push({ id: uid(), ventaId: vid, fecha: today(), hora: nowTime(), monto: ini, metodo: vf.metodoIni.value, referencia: ref, inicial: true });
+              const vid = uid(), ref = vf.metodo.value === "Efectivo" ? "" : vf.referencia.value.trim();
+              state.ventas.push({ id: vid, fecha: today(), hora: nowTime(), clientaId: cta.clientaId, servicioId: "", servicios, concepto: cta.concepto, monto: ini, metodo: vf.metodo.value, referencia: ref, citaId: cta.citaId, cuentaId: cta.id, tipo: "inicial" });
+              cta.abonos.push({ id: uid(), ventaId: vid, fecha: today(), hora: nowTime(), monto: ini, metodo: vf.metodo.value, referencia: ref, inicial: true });
             }
             state.cuentas.push(cta);
             if (c) { c.estado = "Atendida"; c.cuentaId = cta.id; }
@@ -2294,7 +2298,7 @@ tr.is-highlight > :last-child { box-shadow: 12px 0 var(--fill-tertiary); }
             const od = old ? diasDesde(old) : 0;
             const accs = ctas.map((a) => {
               const s = saldoCuenta(a);
-              const hist = a.abonos.length ? `<ul class="x-pc__hist">${a.abonos.slice().sort((x, y) => (x.fecha + x.hora).localeCompare(y.fecha + y.hora)).map((ab) => `<li>${fmtDate(ab.fecha)} · ${ab.inicial ? "Inicial" : "Abono"} ${money(ab.monto)} · ${esc(ab.metodo)}${ab.referencia ? " · Ref. " + esc(ab.referencia) : ""}</li>`).join("")}</ul>` : "";
+              const hist = a.abonos.length ? `<ul class="x-pc__hist">${a.abonos.slice().sort((x, y) => (x.fecha + x.hora).localeCompare(y.fecha + y.hora)).map((ab) => `<li>${fmtDate(ab.fecha)} · ${ab.inicial ? "Pagado al atender" : "Abono"} ${money(ab.monto)} · ${esc(ab.metodo)}${ab.referencia ? " · Ref. " + esc(ab.referencia) : ""}</li>`).join("")}</ul>` : "";
               return `<div class="x-pc__acc"><div class="x-pc__row"><span><b>${fmtDate(a.fecha)}</b> · ${esc(a.concepto || "Venta")}<br><small>Total ${money(a.total)} · abonado ${money(abonadoCuenta(a))}</small></span><span class="x-row">${s > 0.005 ? `<b>Debe ${money(s)}</b><button class="btn" data-abonar-cta="${a.id}">Abonar</button>` : `<span class="chip chip--solid">Pagada</span>`}<button class="btn" data-del-cta="${a.id}" aria-label="Borrar cuenta">✕</button></span></div>${hist}</div>`;
             }).join("");
             return `<li class="x-pc__pac${deb > 0.005 ? "" : " is-paid"}"><div class="x-pc__top"><span class="x-pc__name">${esc(cl?.nombre || "Paciente eliminado")}<small>${esc(cl?.telefono || "Sin teléfono")}${old ? ` · <span class="x-pc__age${od > 30 ? " is-old" : ""}">debe desde ${edadTxt(od)}</span>` : ""}</small></span><span class="x-pc__saldo">${deb > 0.005 ? money(deb) : "Al día"}<small>${deb > 0.005 ? bsOf(deb) : ""}</small></span></div><div class="x-pc__bar" title="Pagado ${pct}%"><i style="width:${pct}%"></i></div><div class="x-pc__acts">${deb > 0.005 ? `<button class="btn" data-abonar-pac="${id}">Abonar</button><button class="btn" data-pagar-pac="${id}">Pagó todo</button>${cl && cl.telefono ? `<button class="btn" data-wa-cobro="${id}">Recordar por WhatsApp</button>` : ""}` : ""}</div>${accs}</li>`;
