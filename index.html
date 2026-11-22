@@ -1031,13 +1031,13 @@ tr.is-highlight > :last-child { box-shadow: 12px 0 var(--fill-tertiary); }
               <button class="btn" id="pcHoy">Hoy</button>
             </div>
             <div class="breakdown"><dl id="pcRepTotals"></dl></div>
-            <div class="table-wrap">
+            <div class="table-wrap" hidden style="display:none">
               <table>
                 <thead><tr><th scope="col">Fecha</th><th scope="col">Paciente</th><th scope="col">Concepto</th><th scope="col">Total</th><th scope="col">Abonado</th><th scope="col">Debe</th></tr></thead>
                 <tbody id="pcRepList"></tbody>
               </table>
             </div>
-            <p class="fineprint">El período filtra por la fecha en que se dejó la cuenta a crédito. "Cobrado en el período" suma iniciales y abonos recibidos en esas fechas.</p>
+            <p class="fineprint" hidden style="display:none">El período filtra por la fecha en que se dejó la cuenta a crédito. "Cobrado en el período" suma iniciales y abonos recibidos en esas fechas.</p>
           </div>
         </section>
 
