@@ -2174,7 +2174,8 @@ tr.is-highlight > :last-child { box-shadow: 12px 0 var(--fill-tertiary); }
         };
         let cobradoTouched = false;
         vf.monto.oninput = () => { montoTouched = vf.monto.value !== "" && Number(vf.monto.value) !== linesTotal(); updateMontoHint(); updCredito(); };
-        vf.cobrado.oninput = () => { cobradoTouched = vf.cobrado.value !== ""; updCredito(); };
+        vf.cobrado.oninput = () => { cobradoTouched = true; updCredito(); };
+        vf.cobrado.onfocus = () => { cobradoTouched = true; vf.cobrado.select && vf.cobrado.select(); };
         function updCredito() {
           const m = round2(Number(vf.monto.value) || 0);
           if (!cobradoTouched) vf.cobrado.value = m;
