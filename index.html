@@ -1055,7 +1055,7 @@ tr.is-highlight > :last-child { box-shadow: 12px 0 var(--fill-tertiary); }
             <h3>WhatsApp del consultorio</h3>
             <label class="x-field">Número de WhatsApp del consultorio<input name="telefonoSalon" type="tel" placeholder="0414-1234567" /></label>
             <p class="fineprint">Los recordatorios se envían desde el WhatsApp abierto en este teléfono. Usa la app en el teléfono que tiene este número.</p>
-            <label class="x-field">Tasa Bs/$ (opcional)<input name="tasa" type="number" min="0" step="0.01" placeholder="Ej. 36.50" /></label>
+            <label class="x-field">Tasa Bs/$ (opcional)<input name="tasa" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Ej. 36.50" /></label>
             <div class="links"><button class="btn" type="submit">Guardar ajustes</button><span class="chip" id="savedChip" hidden>Guardado</span></div>
           </form>
           <div class="x-card">
@@ -1064,7 +1064,7 @@ tr.is-highlight > :last-child { box-shadow: 12px 0 var(--fill-tertiary); }
             <p class="x-hint" id="servHint" hidden>Configura la tasa en Ajustes</p>
             <form class="x-row" id="servForm">
               <input class="x-input x-grow" name="nombre" placeholder="Tratamiento" aria-label="Nombre del tratamiento" required />
-              <input class="x-input" style="width:110px" name="precio" type="number" min="0" step="0.01" placeholder="Precio $" aria-label="Precio en dólares" required />
+              <input class="x-input" style="width:110px" name="precio" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Precio $" aria-label="Precio en dólares" required />
               <button class="btn" type="submit">Agregar</button>
             </form>
           </div>
@@ -1116,8 +1116,8 @@ tr.is-highlight > :last-child { box-shadow: 12px 0 var(--fill-tertiary); }
           <label class="x-field">Agregar tratamiento<select id="ventaAdd"></select></label>
         </fieldset>
         <div class="x-two">
-          <label class="x-field">Monto a pagar $<input name="monto" type="number" min="0" step="0.01" readonly tabindex="-1" class="x-ro" /><span class="x-hint" id="ventaMontoHint">Total de los tratamientos.</span></label>
-          <label class="x-field">Monto pagado $<input name="cobrado" type="number" min="0" step="0.01" /><span class="x-hint" id="cobradoHint">Pon 0 si no paga nada hoy.</span></label>
+          <label class="x-field">Monto a pagar $<input name="monto" type="number" inputmode="decimal" min="0" step="0.01" readonly tabindex="-1" class="x-ro" /><span class="x-hint" id="ventaMontoHint">Total de los tratamientos.</span></label>
+          <label class="x-field">Monto pagado $<input name="cobrado" type="number" inputmode="decimal" min="0" step="0.01" /><span class="x-hint" id="cobradoHint">Pon 0 si no paga nada hoy.</span></label>
         </div>
         <label class="x-field" id="metodoField">Método de pago<select name="metodo"><option>Pago móvil</option><option>Efectivo</option><option>Binance</option></select></label>
         <div class="x-credito" id="creditoBox" hidden>
@@ -1137,7 +1137,7 @@ tr.is-highlight > :last-child { box-shadow: 12px 0 var(--fill-tertiary); }
         <h3 id="abonoTitle">Registrar abono</h3>
         <p class="x-pc__sub" id="abonoInfo"></p>
         <div class="x-two">
-          <label class="x-field">Monto $<input name="monto" type="number" min="0.01" step="0.01" required /><span class="x-hint" id="abonoHint"></span></label>
+          <label class="x-field">Monto $<input name="monto" type="number" inputmode="decimal" min="0.01" step="0.01" required /><span class="x-hint" id="abonoHint"></span></label>
           <label class="x-field">Método<select name="metodo"><option>Pago móvil</option><option>Efectivo</option><option>Binance</option></select></label>
         </div>
         <div class="x-row"><button class="btn" type="button" id="abonoTodo">Pagar todo</button><button class="btn" type="button" id="abonoMitad">La mitad</button></div>
@@ -1156,7 +1156,7 @@ tr.is-highlight > :last-child { box-shadow: 12px 0 var(--fill-tertiary); }
       <form id="gastoForm">
         <h3>Registrar gasto</h3>
         <label class="x-field">Concepto<input name="concepto" required /></label>
-        <label class="x-field">Monto $<input name="monto" type="number" min="0" step="0.01" required /></label>
+        <label class="x-field">Monto $<input name="monto" type="number" inputmode="decimal" min="0" step="0.01" required /></label>
         <div class="links">
           <button class="btn" type="submit">Guardar</button>
           <button class="btn" type="button" data-close>Cancelar</button>
@@ -1180,7 +1180,7 @@ tr.is-highlight > :last-child { box-shadow: 12px 0 var(--fill-tertiary); }
           <div class="x-svc__list"></div>
           <div class="x-row">
             <input class="x-input x-grow x-svc__newname" placeholder="Otro tratamiento" aria-label="Nombre de otro tratamiento" />
-            <input class="x-input x-svc__newprice" style="width:100px" type="number" min="0" step="0.01" placeholder="$" aria-label="Precio en dólares" />
+            <input class="x-input x-svc__newprice" style="width:100px" type="number" inputmode="decimal" min="0" step="0.01" placeholder="$" aria-label="Precio en dólares" />
             <button class="btn x-svc__addbtn" type="button">Agregar</button>
           </div>
           <p class="x-svc__total"></p>
@@ -1195,7 +1195,7 @@ tr.is-highlight > :last-child { box-shadow: 12px 0 var(--fill-tertiary); }
           <label class="x-plan__toggle"><input type="checkbox" id="planOn" /> Plan de varias sesiones</label>
           <div id="planBody" hidden>
             <div class="x-two">
-              <label class="x-field">Número de sesiones<input id="planN" type="number" min="2" max="60" value="10" /></label>
+              <label class="x-field">Número de sesiones<input id="planN" type="number" inputmode="numeric" min="2" max="60" value="10" /></label>
               <label class="x-field">Frecuencia<select id="planFreq">
                 <option value="1">Todos los días (sin domingos)</option>
                 <option value="2" selected>Interdiario</option>
@@ -1229,7 +1229,7 @@ tr.is-highlight > :last-child { box-shadow: 12px 0 var(--fill-tertiary); }
           <div class="x-svc__list"></div>
           <div class="x-row">
             <input class="x-input x-grow x-svc__newname" placeholder="Otro tratamiento" aria-label="Nombre de otro tratamiento" />
-            <input class="x-input x-svc__newprice" style="width:100px" type="number" min="0" step="0.01" placeholder="$" aria-label="Precio en dólares" />
+            <input class="x-input x-svc__newprice" style="width:100px" type="number" inputmode="decimal" min="0" step="0.01" placeholder="$" aria-label="Precio en dólares" />
             <button class="btn x-svc__addbtn" type="button">Agregar</button>
           </div>
           <p class="x-svc__total"></p>
