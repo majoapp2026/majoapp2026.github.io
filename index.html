@@ -789,8 +789,8 @@ tr.is-highlight > :last-child { box-shadow: 12px 0 var(--fill-tertiary); }
       @media (max-width: 420px) { .x-tabs button { padding: 0 9px; font-size: 13px; } }
       .x-tabs { max-width: calc(100% - 16px); overflow-x: auto; scrollbar-width: none; }
       .x-tabs::-webkit-scrollbar { display: none; }
-      .x-tabs button.x-tab-gear { font-size: 22px; line-height: 1; padding: 0 10px; }
-      @media (max-width: 420px) { .x-tabs button.x-tab-gear { font-size: 22px; padding: 0 8px; } }
+      .x-tabs button.x-tab-gear { font-size: 26px; line-height: 1; padding: 0 10px; }
+      @media (max-width: 420px) { .x-tabs button { padding: 0 7px; } .x-tabs button.x-tab-gear { font-size: 26px; padding: 0 8px; } }
       .x-tabs button { white-space: nowrap; flex: 0 0 auto; position: relative; }
       @media (max-width: 420px) { .x-tabs button { padding: 0 8px; font-size: 12.5px; } .x-tabs { gap: 2px; padding: 4px; } }
       .x-badge { display: inline-flex; min-width: 17px; height: 17px; padding: 0 5px; margin-left: 4px; align-items: center; justify-content: center; border-radius: 99px; background: var(--accent, #a8705f); color: #fff; font-size: 11px; font-weight: 700; vertical-align: 1px; }
@@ -1097,7 +1097,7 @@ tr.is-highlight > :last-child { box-shadow: 12px 0 var(--fill-tertiary); }
       <button role="tab" data-tab="calendario" aria-selected="false">Calendario</button>
       <button role="tab" data-tab="clientas" aria-selected="false">Pacientes</button>
       <button role="tab" data-tab="caja" aria-selected="false">Caja</button>
-      <button role="tab" data-tab="porcobrar" aria-selected="false">Cobrar<span class="x-badge" id="pcBadge" hidden></span></button>
+      <button role="tab" data-tab="porcobrar" aria-selected="false">Cobrar<span id="pcBadge" hidden style="display:none"></span></button>
       <button role="tab" data-tab="ajustes" aria-selected="false" aria-label="Ajustes" class="x-tab-gear">⚙︎</button>
     </nav>
 
